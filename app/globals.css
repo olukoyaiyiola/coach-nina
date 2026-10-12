@@ -1,1 +1,126 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-charcoal: #2A1711;
+  --color-brand-surface: #FFF9F4;
+  --color-brand-card: #FFFDF9;
+  --color-brand-border: #E8D8CC;
+  --color-brand-subtle: #CDB9AA;
+  --color-brand-gold: #A84D27;
+  --color-brand-goldHover: #8D3E1F;
+  --color-brand-bronze: #C9794B;
+  --color-brand-cream: #FFF7EF;
+  --color-brand-muted: #75665D;
+  --color-brand-darkBg: #1A0E0A;
+
+  --font-sans: var(--font-plus-jakarta), sans-serif;
+  --font-serif: var(--font-playfair), serif;
+  --font-display: var(--font-cinzel), serif;
+
+  --shadow-luxury: 0 24px 70px rgba(80, 42, 25, 0.10);
+  --shadow-glow-gold: 0 0 45px -10px rgba(212, 175, 55, 0.22);
+}
+
+body {
+  background-color: #FFF8F1;
+  color: #2A1711;
+  font-family: var(--font-plus-jakarta), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Custom luxury scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF7EF;
+}
+::-webkit-scrollbar-thumb {
+  background: #E8D8CC;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A84D27;
+}
+
+/* Luxury Glow & Accents */
+.glow-gold {
+  box-shadow: 0 0 45px -10px rgba(168, 77, 39, 0.15);
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #A84D27 0%, #C9794B 50%, #8D3E1F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.badge-shimmer {
+  background: linear-gradient(90deg, rgba(168,77,39,0.08) 0%, rgba(168,77,39,0.18) 50%, rgba(168,77,39,0.08) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 4s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.editorial-grid {
+  background-image: linear-gradient(rgba(168,77,39,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(168,77,39,0.04) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.hero-orb {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  border-radius: 9999px;
+  background: rgba(201, 121, 75, 0.12);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.countdown-card {
+  background: #2A1711;
+  color: #FFF8F1;
+}
+
+.countdown-number {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+}
+
+.wa-button {
+  background: #25D366;
+  color: #06341B;
+  transition: all 0.2s ease-in-out;
+}
+.wa-button:hover {
+  background: #1fbd5a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.25);
+}
+
+/* TikTok Embed Container */
+.tiktok-embed-container {
+  width: 100%;
+  max-width: 605px;
+  margin: 0 auto;
+}
+
+.tiktok-player-frame {
+  width: 100%;
+  max-width: 605px;
+  height: 620px;
+  border: 0;
+  border-radius: 1.25rem;
+  display: block;
+  background: #1A0E0A;
+}
+
+@media (max-width: 640px) {
+  .tiktok-player-frame {
+    height: 560px;
+  }
+}
