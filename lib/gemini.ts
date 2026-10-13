@@ -16,6 +16,11 @@ Brand Identity:
 - Tone: Warm, editorial, elegant, encouraging, professional, creator-focused.
 - Main Offer: AI Video Creation Starter Class.
 
+Course Delivery Truth (CRITICAL):
+- The class consists of prerecorded video lessons, practical demonstrations, practice exercises, and personal assistance from Coach Nina.
+- It is NOT a live training programme and does not promise scheduled live classes or real-time troubleshooting.
+- Students learn at their own pace.
+
 Your Capabilities & Guidelines:
 1. When the user asks for information (e.g. "What is the current launch price?", "Show me every section mentioning pricing", "What is the campaign deadline?"), answer clearly and concisely based on the current website data provided.
 2. When the user requests a change (e.g. "Change the launch price to ₦18,000", "Rewrite hero headline", "Add FAQ about refunds", "Add TikTok video", "Use new image in hero", "Undo last change"), formulate a structured change proposal.
@@ -55,15 +60,7 @@ export async function processAdminChat(
   message: string,
   history: { role: 'user' | 'assistant'; content: string }[] = []
 ): Promise<{ reply: string; proposal: ProposedChangeSet | null }> {
-  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-  if (!apiKey) {
-    return {
-      reply: 'The Gemini API key is not yet configured in server environment variables (GEMINI_API_KEY or GOOGLE_API_KEY). Please add your key in the server configuration to enable automated conversational editing. You can still edit any section directly using the dashboard tabs above.',
-      proposal: null
-    };
-  }
-
-  // Gather current live site context
+  // Gather current live site context first to access settings as well
   const [settings, content, faqs, showcase, media, changeHistory] = await Promise.all([
     getSettings(),
     getAllContent(),
@@ -72,6 +69,18 @@ export async function processAdminChat(
     getMediaAssets(),
     getChangeHistory(5),
   ]);
+
+  const apiKey =
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_API_KEY ||
+    settings?.gemini_api_key;
+
+  if (!apiKey) {
+    return {
+      reply: 'The Gemini API key is not yet configured in server environment variables (GEMINI_API_KEY or GOOGLE_API_KEY). Please add your key in the server configuration to enable automated conversational editing. You can still edit any section directly using the dashboard tabs above.',
+      proposal: null
+    };
+  }
 
   const siteContext = {
     settings,
@@ -82,19 +91,27 @@ export async function processAdminChat(
     recent_changes: changeHistory.map(h => ({ id: h.id, section: h.section, desc: h.change_description, rolled_back: h.rolled_back })),
   };
 
-  try {
-    const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: modelName,
-      generationConfig: {
-        responseMimeType: 'application/json',
-        temperature: 0.2,
-      },
-      systemInstruction: SYSTEM_PROMPT,
-    });
+  const candidateModels = [
+    process.env.GEMINI_MODEL || 'gemini-3.5-flash',
+    'gemini-3.5-flash',
+    'gemini-3.8-flash',
+  ].filter((v, i, a) => a.indexOf(v) === i);
 
-    const userPrompt = `CURRENT WEBSITE STATE:
+  let lastError: any = null;
+
+  for (const modelName of candidateModels) {
+    try {
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        generationConfig: {
+          responseMimeType: 'application/json',
+          temperature: 0.2,
+        },
+        systemInstruction: SYSTEM_PROMPT,
+      });
+
+      const userPrompt = `CURRENT WEBSITE STATE:
 ${JSON.stringify(siteContext, null, 2)}
 
 USER REQUEST:
@@ -102,26 +119,35 @@ USER REQUEST:
 
 Formulate your response strictly following the JSON format.`;
 
-    const chat = model.startChat({
-      history: history.slice(-6).map(h => ({
-        role: h.role === 'user' ? 'user' : 'model',
-        parts: [{ text: h.content }],
-      })),
-    });
+      // Clean history turns for Gemini multi-turn format
+      const cleanHistory = (history || [])
+        .filter(h => h && h.content && h.content.trim())
+        .slice(-10)
+        .map(h => ({
+          role: h.role === 'user' ? 'user' : 'model',
+          parts: [{ text: h.content }],
+        }));
 
-    const result = await chat.sendMessage(userPrompt);
-    const responseText = result.response.text();
+      const chat = model.startChat({
+        history: cleanHistory,
+      });
 
-    const parsed = JSON.parse(responseText);
-    return {
-      reply: parsed.reply || 'I analyzed your request.',
-      proposal: parsed.proposal || null,
-    };
-  } catch (error: any) {
-    console.error('Gemini API call failed:', error);
-    return {
-      reply: `Could not process request with Gemini: ${error?.message || 'Unknown error'}. You can still make direct updates using the Content and Settings tabs.`,
-      proposal: null,
-    };
+      const result = await chat.sendMessage(userPrompt);
+      const responseText = result.response.text();
+
+      const parsed = JSON.parse(responseText);
+      return {
+        reply: parsed.reply || 'I have analyzed your request and prepared the response.',
+        proposal: parsed.proposal || null,
+      };
+    } catch (error: any) {
+      console.error(`Gemini API attempt with ${modelName} failed:`, error?.message);
+      lastError = error;
+    }
   }
+
+  return {
+    reply: `Could not process request with Gemini: ${lastError?.message || 'Unknown error'}. You can still make direct updates using the Content and Settings tabs.`,
+    proposal: null,
+  };
 }

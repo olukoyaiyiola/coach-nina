@@ -774,7 +774,7 @@ export async function getChatMessages(): Promise<AdminChatMessage[]> {
 export async function addChatMessage(msg: AdminChatMessage): Promise<void> {
   const store = initLocalStore();
   store.chatMessages.push(msg);
-  if (store.chatMessages.length > 50) store.chatMessages = store.chatMessages.slice(-50);
+  if (store.chatMessages.length > 100) store.chatMessages = store.chatMessages.slice(-100);
   saveLocalStore(store);
 }
 
@@ -785,6 +785,24 @@ export async function updateChatMessageStatus(msgId: string, status: AdminChatMe
     msg.status = status;
     saveLocalStore(store);
   }
+}
+
+export async function deleteChatMessage(msgId: string): Promise<boolean> {
+  const store = initLocalStore();
+  if (!store.chatMessages) return false;
+  const initialLen = store.chatMessages.length;
+  store.chatMessages = store.chatMessages.filter(m => m.id !== msgId);
+  if (store.chatMessages.length !== initialLen) {
+    saveLocalStore(store);
+    return true;
+  }
+  return false;
+}
+
+export async function clearChatMessages(): Promise<void> {
+  const store = initLocalStore();
+  store.chatMessages = [];
+  saveLocalStore(store);
 }
 
 export async function getDiagnostics(): Promise<{
@@ -798,6 +816,7 @@ export async function getDiagnostics(): Promise<{
     showcase: number;
     media: number;
     history: number;
+    chat_messages?: number;
   };
 }> {
   const supabase = getSupabaseClient();
@@ -806,14 +825,15 @@ export async function getDiagnostics(): Promise<{
   return {
     mode: supabase ? 'supabase' : 'local_persistent',
     supabase_configured: !!(process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY)),
-    gemini_configured: !!(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY),
+    gemini_configured: !!(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || store.settings?.gemini_api_key),
     item_counts: {
       settings: Object.keys(store.settings).length,
       content_sections: Object.keys(store.content).length,
       faqs: store.faqs.length,
       showcase: store.showcase.length,
       media: store.media.length,
-      history: store.history.length
+      history: store.history.length,
+      chat_messages: (store.chatMessages || []).length
     }
   };
 }
