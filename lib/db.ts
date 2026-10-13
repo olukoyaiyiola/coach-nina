@@ -182,9 +182,32 @@ function getSupabaseClient(): SupabaseClient | null {
   });
 }
 
-// Local File Store Helper (Atomic writes & auto-seeding)
-const DATA_DIR = path.join(process.cwd(), 'data');
-const STORE_FILE = path.join(DATA_DIR, 'coach_nina_store.json');
+// Local File Store Helper (Atomic writes & auto-seeding with Serverless /tmp support)
+let memoryStore: LocalStoreSchema | null = null;
+
+function getStorePaths() {
+  const isServerless = !!process.env.VERCEL || (typeof process.cwd === 'function' && process.cwd().startsWith('/var/task')) || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+  const localDir = path.join(process.cwd(), 'data');
+  const localFile = path.join(localDir, 'coach_nina_store.json');
+
+  if (isServerless) {
+    const tmpDir = '/tmp';
+    const tmpFile = path.join(tmpDir, 'coach_nina_store.json');
+    return {
+      readOnlySeedFile: localFile,
+      writableDir: tmpDir,
+      writableFile: tmpFile,
+      isServerless: true,
+    };
+  }
+
+  return {
+    readOnlySeedFile: localFile,
+    writableDir: localDir,
+    writableFile: localFile,
+    isServerless: false,
+  };
+}
 
 interface LocalStoreSchema {
   settings: SiteSettings;
@@ -197,14 +220,17 @@ interface LocalStoreSchema {
 }
 
 function initLocalStore(): LocalStoreSchema {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (memoryStore) {
+    return memoryStore;
   }
 
-  if (fs.existsSync(STORE_FILE)) {
+  const { readOnlySeedFile, writableDir, writableFile, isServerless } = getStorePaths();
+
+  // 1. Try reading existing writable store in /tmp or local data/
+  if (fs.existsSync(/*turbopackIgnore: true*/ writableFile)) {
     try {
-      const data = JSON.parse(fs.readFileSync(STORE_FILE, 'utf-8'));
-      return {
+      const data = JSON.parse(fs.readFileSync(/*turbopackIgnore: true*/ writableFile, 'utf-8'));
+      memoryStore = {
         settings: { ...DEFAULT_SETTINGS, ...data.settings },
         content: {
           hero: { ...DEFAULT_CONTENT.hero, ...(data.content?.hero || {}) },
@@ -219,11 +245,37 @@ function initLocalStore(): LocalStoreSchema {
         history: data.history || [],
         chatMessages: data.chatMessages || []
       };
-    } catch {
-      // If corrupted, re-seed
-    }
+      return memoryStore;
+    } catch {}
   }
 
+  // 2. If running on Vercel serverless and /tmp is not yet initialized, read bundled seed file
+  if (isServerless && fs.existsSync(/*turbopackIgnore: true*/ readOnlySeedFile)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(/*turbopackIgnore: true*/ readOnlySeedFile, 'utf-8'));
+      memoryStore = {
+        settings: { ...DEFAULT_SETTINGS, ...data.settings },
+        content: {
+          hero: { ...DEFAULT_CONTENT.hero, ...(data.content?.hero || {}) },
+          overview: { ...DEFAULT_CONTENT.overview, ...(data.content?.overview || {}) },
+          about_coach: { ...DEFAULT_CONTENT.about_coach, ...(data.content?.about_coach || {}) },
+          whats_included: { ...DEFAULT_CONTENT.whats_included, ...(data.content?.whats_included || {}) },
+          ...(data.content || {})
+        },
+        faqs: data.faqs || DEFAULT_FAQS,
+        showcase: data.showcase || DEFAULT_SHOWCASE,
+        media: data.media || DEFAULT_MEDIA,
+        history: data.history || [],
+        chatMessages: data.chatMessages || []
+      };
+      try {
+        fs.writeFileSync(/*turbopackIgnore: true*/ writableFile, JSON.stringify(memoryStore, null, 2), 'utf-8');
+      } catch {}
+      return memoryStore;
+    } catch {}
+  }
+
+  // 3. Fallback to default in-memory seed
   const initial: LocalStoreSchema = {
     settings: DEFAULT_SETTINGS,
     content: DEFAULT_CONTENT,
@@ -233,17 +285,35 @@ function initLocalStore(): LocalStoreSchema {
     history: [],
     chatMessages: []
   };
-  fs.writeFileSync(STORE_FILE, JSON.stringify(initial, null, 2), 'utf-8');
-  return initial;
+
+  memoryStore = initial;
+
+  try {
+    if (!fs.existsSync(/*turbopackIgnore: true*/ writableDir)) {
+      fs.mkdirSync(/*turbopackIgnore: true*/ writableDir, { recursive: true });
+    }
+    fs.writeFileSync(/*turbopackIgnore: true*/ writableFile, JSON.stringify(initial, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('Could not write store to disk, running in memory-safe mode:', err);
+  }
+
+  return memoryStore;
 }
 
 function saveLocalStore(store: LocalStoreSchema): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  memoryStore = store;
+  const { writableDir, writableFile } = getStorePaths();
+
+  try {
+    if (!fs.existsSync(/*turbopackIgnore: true*/ writableDir)) {
+      fs.mkdirSync(/*turbopackIgnore: true*/ writableDir, { recursive: true });
+    }
+    const tempPath = `${writableFile}.tmp.${Date.now()}`;
+    fs.writeFileSync(/*turbopackIgnore: true*/ tempPath, JSON.stringify(store, null, 2), 'utf-8');
+    fs.renameSync(/*turbopackIgnore: true*/ tempPath, writableFile);
+  } catch (err) {
+    console.warn('Could not persist store to disk, state maintained in memory:', err);
   }
-  const tempPath = `${STORE_FILE}.tmp.${Date.now()}`;
-  fs.writeFileSync(tempPath, JSON.stringify(store, null, 2), 'utf-8');
-  fs.renameSync(tempPath, STORE_FILE);
 }
 
 // ==============================================================================
@@ -729,7 +799,7 @@ export async function getDiagnostics(): Promise<{
   return {
     mode: supabase ? 'supabase' : 'local_persistent',
     supabase_configured: !!(process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY)),
-    gemini_configured: !!process.env.GEMINI_API_KEY,
+    gemini_configured: !!(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY),
     item_counts: {
       settings: Object.keys(store.settings).length,
       content_sections: Object.keys(store.content).length,

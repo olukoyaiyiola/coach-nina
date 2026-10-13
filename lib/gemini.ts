@@ -55,10 +55,10 @@ export async function processAdminChat(
   message: string,
   history: { role: 'user' | 'assistant'; content: string }[] = []
 ): Promise<{ reply: string; proposal: ProposedChangeSet | null }> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
   if (!apiKey) {
     return {
-      reply: 'The Gemini API key is not yet configured in server environment variables (GEMINI_API_KEY). Please add your key in the server configuration to enable automated conversational editing. You can still edit any section directly using the dashboard tabs above.',
+      reply: 'The Gemini API key is not yet configured in server environment variables (GEMINI_API_KEY or GOOGLE_API_KEY). Please add your key in the server configuration to enable automated conversational editing. You can still edit any section directly using the dashboard tabs above.',
       proposal: null
     };
   }

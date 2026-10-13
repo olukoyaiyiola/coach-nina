@@ -8,9 +8,11 @@ import { MediaAsset } from '@/lib/types';
 const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
 
 function ensureUploadsDir() {
-  if (!fs.existsSync(UPLOADS_DIR)) {
-    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  }
+  try {
+    if (!fs.existsSync(UPLOADS_DIR)) {
+      fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+    }
+  } catch {}
 }
 
 // SSRF Protection: verify hostname is not a private/loopback/cloud-metadata address
