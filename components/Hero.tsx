@@ -22,7 +22,7 @@ export default function Hero({ settings, content }: HeroProps) {
         <div className="lg:col-span-7 text-left space-y-6 sm:space-y-8 relative z-10">
           {/* Badge */}
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full badge-shimmer border border-brand-gold/30 text-brand-gold text-xs font-bold uppercase tracking-wider">
-            <span>{content.badge || '✨ A practical skill you can start using immediately'}</span>
+            <span>{content.badge || '🎬 A practical skill you can start using immediately'}</span>
           </div>
 
           {/* Headline */}

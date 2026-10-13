@@ -38,7 +38,7 @@ export default function Navbar({ settings }: NavbarProps) {
               href="#offer"
               className="underline font-bold text-brand-gold hover:text-white transition-colors ml-1"
             >
-              See offer ↓
+              See offer &rarr;
             </a>
           </div>
         </aside>

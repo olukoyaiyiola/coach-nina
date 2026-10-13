@@ -22,12 +22,12 @@ const cinzel = Cinzel({
 
 export const metadata: Metadata = {
   title: 'AI Video Creation Starter Class | Coach Nina',
-  description: 'Learn practical AI video creation from scratch with Coach Nina. Beginner-friendly, hands-on training for creators, business owners, freelancers and students.',
+  description: 'Learn practical AI video creation from scratch with Coach Nina through step-by-step prerecorded lessons, practical demonstrations, practice exercises, and personal assistance. Beginner-friendly for creators, business owners, freelancers and students.',
   keywords: ['AI Video Creation', 'Coach Nina', 'TikTok AI Video', 'AI Video Starter Class', 'Generative Video', 'Nigeria AI Creator'],
   authors: [{ name: 'Coach Nina' }],
   openGraph: {
     title: 'AI Video Creation Starter Class | Coach Nina',
-    description: 'Learn practical AI video creation from scratch with Coach Nina. Beginner-friendly, hands-on training.',
+    description: 'Learn practical AI video creation from scratch with Coach Nina through step-by-step prerecorded lessons, practical demonstrations, and personal assistance.',
     url: 'https://coachnina.com',
     siteName: 'Coach Nina AI Video Academy',
     locale: 'en_NG',

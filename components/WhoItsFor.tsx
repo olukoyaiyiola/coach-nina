@@ -11,12 +11,12 @@ export default function WhoItsFor() {
       desc: 'Cut expensive agency fees. Produce viral product ads that explain and sell your offerings 24/7.',
     },
     {
-      emoji: '🎬',
+      emoji: '🎥',
       title: 'Content Creators',
       desc: 'Scale your views across TikTok, Reels, and YouTube Shorts without showing your face on camera.',
     },
     {
-      emoji: '⚡',
+      emoji: '💻',
       title: 'Freelancers',
       desc: 'Add a high-demand service that businesses and brands pay ₦100,000 to ₦300,000+ per campaign for.',
     },

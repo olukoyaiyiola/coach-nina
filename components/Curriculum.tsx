@@ -11,37 +11,37 @@ export default function Curriculum({ whatsIncluded }: CurriculumProps) {
       num: 'MODULE 01',
       title: 'Prompt-Writing & Visual Direction',
       desc: 'The art of prompt engineering for camera angles, cinematic lighting, color palettes, and emotional expression without endless trial and error.',
-      badge: '✓ Custom Prompt Formula Included',
+      badge: '✨ Custom Prompt Formula Included',
     },
     {
       num: 'MODULE 02',
       title: 'Choosing & Using AI Video Tools',
       desc: 'Cut through the noise. Direct hands-on access to the exact free and high-utility tools used for image generation, scene animation, and upscaling.',
-      badge: '✓ Smartphone + PC Compatible Stack',
+      badge: '📱 Smartphone + PC Compatible Stack',
     },
     {
       num: 'MODULE 03',
       title: 'AI Avatars & Generated Scenes',
       desc: 'Generate authentic characters that maintain their distinct identity, clothing, and facial features across cuts without glitches or weird distortions.',
-      badge: '✓ Realistic Character Consistency',
+      badge: '👤 Realistic Character Consistency',
     },
     {
       num: 'MODULE 04',
       title: 'Voiceovers, Audio & Auto-Captions',
       desc: 'Master studio-quality voice synthesis, Nigerian and regional accents, background music placement, and high-retention stylized captions.',
-      badge: '✓ Emotional Modulation & Accents',
+      badge: '🎙️ Emotional Modulation & Accents',
     },
     {
       num: 'MODULE 05',
       title: 'Basic & Fast Video Editing',
       desc: 'Learn simple, rapid editing workflows on your phone or computer to trim, transition, color-match, and polish scenes within minutes.',
-      badge: '✓ Beginner Video Editing Framework',
+      badge: '✂️ Beginner Video Editing Framework',
     },
     {
       num: 'MODULE 06',
       title: 'Pricing, Clients & Delivering Projects',
       desc: 'How to pitch business owners, price deliverables cleanly, package ongoing retainers, and deliver watermark-free client projects professionally.',
-      badge: '✓ Client Outreach Scripts & Templates',
+      badge: '💼 Client Outreach Scripts & Templates',
     },
   ];
 
@@ -54,7 +54,7 @@ export default function Curriculum({ whatsIncluded }: CurriculumProps) {
           <span>Starter Class Syllabus</span>
         </div>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-charcoal tracking-tight font-display">
-          What You’ll Learn
+          What You'll Learn
         </h2>
         <p className="text-stone-600 mt-4 text-base sm:text-lg">
           A beginner-friendly path from your very first prompt to a finished, usable AI video.
@@ -98,10 +98,35 @@ export default function Curriculum({ whatsIncluded }: CurriculumProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {(whatsIncluded.items || []).map((item, index) => (
+          {(whatsIncluded?.items?.length ? whatsIncluded.items : [
+            {
+              title: 'Prerecorded Video Lessons',
+              desc: 'Learn through clear, step-by-step lessons you can watch at your own pace.'
+            },
+            {
+              title: 'Practical Video Walkthroughs',
+              desc: 'Follow demonstrations of creating AI-generated videos, avatars, and scenes.'
+            },
+            {
+              title: 'Practice Exercises',
+              desc: 'Apply what you learn as you work through the lessons.'
+            },
+            {
+              title: 'Personal Assistance',
+              desc: 'Get help from Coach Nina when you need clarification or encounter difficulties.'
+            },
+            {
+              title: 'AI Prompts & Resources',
+              desc: 'Access useful prompt formulas, tool links, and learning resources included with the class.'
+            },
+            {
+              title: 'Learn At Your Own Pace',
+              desc: 'Work through the lessons at a pace that suits your schedule.'
+            }
+          ]).map((item, index) => (
             <div
               key={index}
-              className="flex items-start space-x-3.5 bg-brand-card p-4 rounded-xl border border-brand-border shadow-xs"
+              className="flex items-start space-x-3.5 bg-brand-card p-4 rounded-xl border border-brand-border shadow-xs hover:border-brand-gold/40 transition-colors"
             >
               <CheckCircle2 className="w-5 h-5 text-brand-gold shrink-0 mt-0.5" />
               <div>

@@ -34,7 +34,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
 
 const DEFAULT_CONTENT: Record<string, any> = {
   hero: {
-    badge: '✨ A practical skill you can start using immediately',
+    badge: '🎬 A practical skill you can start using immediately',
     headline: 'Learn To Create Better Videos With AI.',
     subheadline: 'Learn how to create AI-powered videos for businesses, brands, and content projects, even if you are just getting started.',
     practical_benefit: 'Understand the tools, practise creating high-quality videos, and learn how to offer AI video creation as a high-demand service.',
@@ -45,7 +45,7 @@ const DEFAULT_CONTENT: Record<string, any> = {
       'Hands-On Real-Project Builds',
       'Monetization & Client Playbook'
     ],
-    guarantee_note: '🔒 Launch price ends October 31, 2026 • While available'
+    guarantee_note: '🔥 Launch price ends October 31, 2026 • While available'
   },
   overview: {
     tagline: 'Real Skills. Plain Language.',
@@ -62,12 +62,12 @@ const DEFAULT_CONTENT: Record<string, any> = {
   whats_included: {
     title: 'What Is Included In The Class',
     items: [
-      { title: 'Live Online Training', desc: 'Interactive, step-by-step guided lessons with Coach Nina' },
-      { title: 'Hands-On Practical Session', desc: 'Live building of real ads, avatars, and video scenes' },
-      { title: 'Practice Assignment', desc: 'Guided assignment with direct feedback to lock in your skills' },
-      { title: 'Live Q&A Session', desc: 'Dedicated troubleshooting and live workflow problem-solving' },
-      { title: 'Resource & Prompt Pack', desc: 'Plug-and-play prompt formulas, tool links, and client scripts' },
-      { title: 'Private Community Access', desc: 'Network with fellow creators and get ongoing support' }
+      { title: 'Prerecorded Video Lessons', desc: 'Learn through clear, step-by-step lessons you can watch at your own pace.' },
+      { title: 'Practical Video Walkthroughs', desc: 'Follow demonstrations of creating AI-generated videos, avatars, and scenes.' },
+      { title: 'Practice Exercises', desc: 'Apply what you learn as you work through the lessons.' },
+      { title: 'Personal Assistance', desc: 'Get help from Coach Nina when you need clarification or encounter difficulties.' },
+      { title: 'AI Prompts & Resources', desc: 'Access useful prompt formulas, tool links, and learning resources included with the class.' },
+      { title: 'Learn At Your Own Pace', desc: 'Work through the lessons at a pace that suits your schedule.' }
     ]
   }
 };
@@ -111,8 +111,15 @@ const DEFAULT_FAQS: FaqItem[] = [
   {
     id: 'faq-6',
     question: 'How do I complete my registration?',
-    answer: 'Click the WhatsApp button on this page to chat directly with Coach Nina. You will receive immediate guidance on joining the upcoming starter class session.',
+    answer: 'Click the WhatsApp button on this page to chat directly with Coach Nina. You will receive payment details and immediate access to the prerecorded video lessons, practice exercises, and learning resources.',
     sort_order: 6,
+    is_active: true
+  },
+  {
+    id: 'faq-7',
+    question: 'How is the course delivered?',
+    answer: 'The AI Video Creation Starter Class consists of prerecorded instructional video lessons and practical demonstrations that you can watch at your own pace anytime. Practice exercises and learning resources are included, and you receive personal assistance from Coach Nina whenever you need help or clarification.',
+    sort_order: 7,
     is_active: true
   }
 ];
