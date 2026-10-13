@@ -92,10 +92,10 @@ export async function processAdminChat(
   };
 
   const candidateModels = [
-    process.env.GEMINI_MODEL || 'gemini-3.5-flash',
     'gemini-3.5-flash',
-    'gemini-3.8-flash',
-  ].filter((v, i, a) => a.indexOf(v) === i);
+    'gemini-flash-lite-latest',
+    process.env.GEMINI_MODEL || 'gemini-3.5-flash',
+  ].filter((v, i, a) => Boolean(v) && a.indexOf(v) === i);
 
   let lastError: any = null;
 
