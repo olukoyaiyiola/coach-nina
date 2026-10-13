@@ -124,3 +124,52 @@ body {
     height: 560px;
   }
 }
+
+/* Dynamic Theme Presets */
+[data-theme="pink"], body[data-theme="pink"], .editorial-grid[data-theme="pink"] {
+  --color-brand-gold: #DB2777;
+  --color-brand-goldHover: #BE185D;
+  --color-brand-bronze: #F472B6;
+  --color-brand-surface: #FFF1F2;
+  --color-brand-card: #FFFCFD;
+  --color-brand-border: #FBCFE8;
+  --color-brand-subtle: #F472B6;
+  --color-brand-cream: #FDF2F8;
+  --color-brand-charcoal: #370C1E;
+}
+
+[data-theme="purple"], body[data-theme="purple"], .editorial-grid[data-theme="purple"] {
+  --color-brand-gold: #7C3AED;
+  --color-brand-goldHover: #6D28D9;
+  --color-brand-bronze: #A78BFA;
+  --color-brand-surface: #F5F3FF;
+  --color-brand-card: #FAF8FF;
+  --color-brand-border: #DDD6FE;
+  --color-brand-subtle: #A78BFA;
+  --color-brand-cream: #EDE9FE;
+  --color-brand-charcoal: #1E1035;
+}
+
+[data-theme="emerald"], body[data-theme="emerald"], .editorial-grid[data-theme="emerald"] {
+  --color-brand-gold: #059669;
+  --color-brand-goldHover: #047857;
+  --color-brand-bronze: #34D399;
+  --color-brand-surface: #ECFDF5;
+  --color-brand-card: #F6FEF9;
+  --color-brand-border: #A7F3D0;
+  --color-brand-subtle: #34D399;
+  --color-brand-cream: #D1FAE5;
+  --color-brand-charcoal: #062319;
+}
+
+[data-theme="ocean"], body[data-theme="ocean"], .editorial-grid[data-theme="ocean"] {
+  --color-brand-gold: #0284C7;
+  --color-brand-goldHover: #0369A1;
+  --color-brand-bronze: #38BDF8;
+  --color-brand-surface: #F0F9FF;
+  --color-brand-card: #F8FCFF;
+  --color-brand-border: #BAE6FD;
+  --color-brand-subtle: #38BDF8;
+  --color-brand-cream: #E0F2FE;
+  --color-brand-charcoal: #082136;
+}

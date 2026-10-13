@@ -17,6 +17,8 @@ export interface SiteSettings {
   creator_unique_id: string;
   hero_image_url: string;
   bio_image_url: string;
+  site_theme: string;
+  accent_color: string;
   [key: string]: string;
 }
 

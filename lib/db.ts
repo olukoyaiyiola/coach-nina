@@ -30,6 +30,8 @@ const DEFAULT_SETTINGS: SiteSettings = {
   creator_unique_id: 'noinoi.stories',
   hero_image_url: '/images/coach-nina-laptop.png',
   bio_image_url: '/images/coach-nina-laptop.png',
+  site_theme: 'editorial',
+  accent_color: '#A84D27',
 };
 
 const DEFAULT_CONTENT: Record<string, any> = {

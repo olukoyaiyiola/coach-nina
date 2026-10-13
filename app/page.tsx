@@ -21,7 +21,17 @@ export default async function HomePage() {
   ]);
 
   return (
-    <main className="min-h-screen flex flex-col selection:bg-brand-gold selection:text-white pb-14 sm:pb-0">
+    <main
+      className="min-h-screen flex flex-col selection:bg-brand-gold selection:text-white pb-14 sm:pb-0 transition-colors duration-300"
+      data-theme={settings.site_theme || 'editorial'}
+      style={{
+        backgroundColor:
+          settings.site_theme === 'pink' ? '#FFF5F7' :
+          settings.site_theme === 'purple' ? '#FAF8FF' :
+          settings.site_theme === 'emerald' ? '#F6FEF9' :
+          settings.site_theme === 'ocean' ? '#F0F9FF' : '#FFF8F1'
+      }}
+    >
       <Navbar settings={settings} />
       <Hero settings={settings} content={content.hero} />
       <WhoItsFor />

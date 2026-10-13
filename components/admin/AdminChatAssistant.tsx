@@ -225,8 +225,13 @@ export default function AdminChatAssistant({ onContentUpdated }: AdminChatAssist
     }
   };
 
-  const handleApplyChanges = async () => {
-    if (!activeProposal) return;
+  const handleApplyChanges = async (
+    overrideProposal?: ProposedChangeSet,
+    overrideMsgId?: string
+  ) => {
+    const targetProposal = overrideProposal || activeProposal?.proposal;
+    const targetMsgId = overrideMsgId || activeProposal?.messageId;
+    if (!targetProposal) return;
     setApplying(true);
     setStatusMessage(null);
 
@@ -235,8 +240,8 @@ export default function AdminChatAssistant({ onContentUpdated }: AdminChatAssist
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          proposal: activeProposal.proposal,
-          messageId: activeProposal.messageId,
+          proposal: targetProposal,
+          messageId: targetMsgId,
         }),
       });
 
@@ -417,6 +422,27 @@ export default function AdminChatAssistant({ onContentUpdated }: AdminChatAssist
                           </div>
                         ))}
                       </div>
+
+                      {/* Immediate 1-Click Action Buttons inside the message */}
+                      <div className="pt-2 border-t border-stone-200 flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleCancelProposal()}
+                          disabled={applying}
+                          className="px-2.5 py-1 text-xs font-semibold text-stone-600 hover:text-stone-900 border border-stone-300 rounded-lg hover:bg-stone-100 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleApplyChanges(msg.proposed_changes!, msg.id)}
+                          disabled={applying}
+                          className="px-3 py-1 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>{applying ? 'Applying...' : 'Apply & Publish Live'}</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -452,7 +478,7 @@ export default function AdminChatAssistant({ onContentUpdated }: AdminChatAssist
               <div className="w-2 h-2 rounded-full bg-purple-600 animate-bounce" />
               <div className="w-2 h-2 rounded-full bg-purple-600 animate-bounce [animation-delay:0.2s]" />
               <div className="w-2 h-2 rounded-full bg-purple-600 animate-bounce [animation-delay:0.4s]" />
-              <span className="ml-1 text-[11px]">Gemini is analyzing website content...</span>
+              <span className="ml-1 text-[11px]">thinking....</span>
             </div>
           </div>
         )}
@@ -477,7 +503,7 @@ export default function AdminChatAssistant({ onContentUpdated }: AdminChatAssist
               Cancel
             </button>
             <button
-              onClick={handleApplyChanges}
+              onClick={() => handleApplyChanges()}
               disabled={applying}
               className="px-4 py-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
             >
